@@ -36,17 +36,19 @@ class Cargo {
 
 class Notification {
     constructor(code, options = null){
-        if(options) const { lang, data } = options
-
         let notification = null
-        
         if(this.store())
             notification = this.store().notifications.find(el => el.name == code)
+
+        if(options) {
+            const { lang, data } = options
+            if(lang) this.langTo(lang)
+        }
         
         this.status = notification ? notification.status : 200
         this.code = code
         this.state = notification ? notification.state : 'unknown'
-        this.lang = lang || 'en'
+        this.lang = 'en'
         this.messages = []
     }
 
