@@ -1,4 +1,5 @@
 const { timestamp, randInt } = require('funx-js')
+
 class Cargo {
 
     constructor(){
@@ -29,7 +30,7 @@ class Cargo {
     }
 }
 
-const cargo = (req, res, next) => {
+const cargo = () => (req, res, next) => {
     if(!req.tools) req.tools = {}
     const cargo = new Cargo()
     req.tools.cargo = cargo
