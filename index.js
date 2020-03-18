@@ -29,14 +29,14 @@ class Cargo {
     }
 }
 
-const cargomw = (req, res, next) => {
+const cargo = (req, res, next) => {
     if(!req.tools) req.tools = {}
     const cargo = new Cargo()
     req.tools.cargo = cargo
     next()
 }
 
-module.exports = { Cargo, cargomw }
+module.exports = { Cargo, cargo }
 
 
 
