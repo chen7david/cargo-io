@@ -2,9 +2,9 @@ const { timestamp, randInt } = require('funx-js')
 class Cargo {
 
     constructor(){
+        this.isCargo = true
         this.serial = randInt(5)
         this.createdAt = timestamp()
-        this.isCargo = true
     }
 
     details(details){
@@ -29,7 +29,14 @@ class Cargo {
     }
 }
 
-module.exports = { Cargo }
+const cargo = (req, res, next) => {
+    if(!req.tools) req.tools = {}
+    const cargo = new Cargo()
+    req.tools.cargo = cargo
+    next()
+}
+
+module.exports = { Cargo, cargo }
 
 
 
