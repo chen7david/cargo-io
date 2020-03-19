@@ -1,10 +1,10 @@
-const { timestamp, randInt } = require('funx-js')
+const { timestamp, serialInt } = require('funx-js')
 
 class Cargo {
 
     constructor(){
         this.isCargo = true
-        this.serial = randInt(5)
+        this.serial = serialInt("00000")
         this.createdAt = timestamp()
     }
 
