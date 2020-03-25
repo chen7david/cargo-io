@@ -19,7 +19,6 @@ const cargo = require('cargo')
 app.use(cargo())
 
 // access in your routes
-
 const someRoute = (req, res, next) => {
     const somePaylaod = { 
         // add your data here ...
@@ -31,6 +30,7 @@ const someRoute = (req, res, next) => {
 
     res.status(200).json(req.cargo)
 } 
+
 // mount route on express app
 app.use(someRoute)
 
