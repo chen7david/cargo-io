@@ -31,9 +31,7 @@ class Cargo {
 }
 
 exports = module.exports = () => (req, res, next) => {
-    if(!req.tools) req.tools = {}
-    const cargo = new Cargo()
-    req.tools.cargo = cargo
+    req.cargo = new Cargo()
     next()
 } 
 
