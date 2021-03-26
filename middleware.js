@@ -1,58 +1,30 @@
-const { serialInt } = require('./functions')
-
 module.exports = {
 
-    mutator: (options = {}) => async (err, ctx, next) => {
+    handler: (cb) => async (err, ctx, next) => {
 
-        if(!options.validation){
-            const { ValidationError } = require('joi')
-            if(err instanceof ValidationError){
-                const { details, _original } = err
-                ctx.cargo.original(_original).state('validation').status(422)
-                details.map(d => ctx.cargo.loadmsg(d.context.key, d.message))
-            }
-        }
-
-        if(!options.objection){
-            const { UniqueViolationError } = require('objection')
-            if(err instanceof UniqueViolationError){
-                let key = err.columns.pop()
-                ctx.cargo.original(ctx.request.body).state('validation').status(422)
-                ctx.cargo.loadmsg(key, `this ${key} is already taken`)
-            }
-        }
-
-        if(!options.jwt){
-            const { JsonWebTokenError } = require('jsonwebtoken')
-            if(err instanceof JsonWebTokenError){
-                if(err.message == 'invalid signature') ctx.cargo.status(401).msg('invalid token signature')
-                if(err.message == 'jwt expired') ctx.cargo.status(401).msg('token expired')
-                if(err.message == 'jwt malformed') ctx.cargo.status(401).msg('invalid token format')
-                if(err.message == 'jwt must be provided') ctx.cargo.status(401).msg('token missing')
-            }
-        }
-
+        if(cb) cb(err, ctx, next)
+    
         /* DEFAULT EXCEPTION MUTATOR */
         if(Object.keys(ctx.cargo.details).length == 0){
-            const serial = serialInt('000000')
-            ctx.cargo.serial(serial).msg(`unknow error - ER${serial}`).status(500)
+            ctx.serial = Math.floor(Math.random()*90000) + 10000
+            ctx.cargo.serial(ctx.serial).msg(`unknow error - ER${ctx.serial}`).status(500)
         }
-
+    
         return ctx.cargo
     },
 
-    errors: (cb = null) => async (ctx, next) => {
+    catcher: (cb = null) => async (ctx, next) => {
         try {
             await next()
         } catch (err) {
             const data = cb ? await cb(err, ctx, next) : err.message 
-            ctx.status = err.status || ctx.cargo.status || 500
+            ctx.status = ctx.cargo.status || err.status || err.statusCode ||  500
             ctx.body = data
             ctx.app.emit('error', err, ctx)
         }
     },
 
     logger: (err, ctx) => {
-        console.log(ctx.cargo.serial, err)
+        console.log(`ERR${ctx.serial}`,err)
     }
 }

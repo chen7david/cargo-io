@@ -1,7 +1,5 @@
-const { logger, mutator, errors } = require('./middleware')
+const { logger, catcher, handler } = require('./middleware')
 module.exports = {
-    logger,
-    mutator,
-    errors,
+    logger, catcher, handler,
     cargo: require('./cargo')
 }
