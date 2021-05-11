@@ -7,6 +7,7 @@ class Cargo {
 
     status(status){
         this.status = status
+        this.defaultState()
         return this
     }
 
@@ -20,8 +21,21 @@ class Cargo {
         return this
     }
 
+    defaultState(){
+        const {messages, state} = this.details
+        if(!this.status || messages || state) return 
+        const status = this.status
+        let _state = 'success'
+        if(status == 200) _state = 'success'
+        if(status == 201) _state = 'info'
+        if(status == 422) _state = 'warning'
+        if(status == 401) _state = 'danger'
+        this.state(_state)
+    }
+
     error(status){
         this.status = status
+        this.defaultState()
         const error = new Error({status})
         throw(error)
     }
