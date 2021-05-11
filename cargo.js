@@ -22,7 +22,8 @@ class Cargo {
 
     error(status){
         this.status = status
-        throw({status})
+        const error = new Error({status})
+        throw(error)
     }
 
     original(original){
