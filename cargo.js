@@ -28,8 +28,8 @@ class Cargo {
         let _state = 'success'
         if(status == 200) _state = 'success'
         if(status == 201) _state = 'info'
+        if(status == 401) _state = 'error'
         if(status == 422) _state = 'warning'
-        if(status == 401) _state = 'danger'
         this.state(_state)
     }
 
