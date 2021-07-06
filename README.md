@@ -14,6 +14,10 @@ const router = require('koa-router')()
 const { kcargo, kcatcher } = require('./cargo')
 const port = process.env.PORT || 3000
 
+const handler = async (error, ctx, next) => {
+    // mutate your errors here by using the ctx.cargo object
+}
+
 app.use(kcargo())
 app.use(kcatcher(handler))
 app.use(router.routes())
