@@ -1,3 +1,6 @@
+const fs = require('fs')
+const p = require('path')
+
 const catcher = (cb = null) => async (ctx, next) => {
     try {
         await next()
@@ -13,16 +16,20 @@ const catcher = (cb = null) => async (ctx, next) => {
     }
 }
 
+const ksockets = (app, io) => {
+    const file = p.join(process.cwd(), 'src', 'middleware', 'sockets.js')
+    const sockets = require(file)
+    if(sockets) sockets(app, io)
+    return async (ctx, next) => await next()
+}
+
 const knotfound = (msg = 'not found!') => async(ctx) => {
     ctx.body = ctx.cargo.status(404).error(msg)
 }
 
 const autoload = (path = '.') => {
-    const { readdirSync } = require('fs')
-    const p = require('path')
     const files = {}
-
-    readdirSync(path)
+    fs.readdirSync(path)
         .filter(f => f.includes('.js') && !f.includes('index'))
         .map(f => files[f.replace('.js', '')] = require(p.join(path,f)))
 
@@ -112,6 +119,7 @@ exports = module.exports = () => async (ctx, next) => {
     await next()
 }
 
+exports.ksockets = ksockets
 exports.autoload = autoload
 exports.kcatcher = catcher
 exports.knotfound = knotfound
