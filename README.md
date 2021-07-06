@@ -21,6 +21,26 @@ app.use(router.routes())
 app.listen(port)
 ```
 
+#### Sending Data
+```js
+router.get('/', async (ctx) => {
+    const someObject = {}
+    ctx.body = ctx.cargo.status(201).message('object created').payload(someObject)
+})
+```
+
+###### output
+```cmd
+{
+    "isCargo": true,
+    "status": 201,
+    "serial": 434473,
+    "message": "object created",
+    "payload": {},
+    "state": "success"
+}
+```
+
 #### Unhandled Error
 if you dont handle an error, it will get masked as an unknow error in your response with a serial number, which you can use to track it in your logs.
 ```js
