@@ -17,6 +17,17 @@ const knotfound = (msg = 'not found!') => async(ctx) => {
     ctx.body = ctx.cargo.status(404).error(msg)
 }
 
+const autoload = (folderpath = '.') => {
+    const { readdirSync } = require('fs')
+    const files = {}
+
+    readdirSync(folderpath)
+        .filter(f => f.includes('.js') && !f.includes('index'))
+        .map(f => files[f.replace('.js', '')] = require('./' + f))
+
+    return files
+}
+
 
 class CargoError extends Error {
     constructor(msg){
@@ -100,7 +111,7 @@ exports = module.exports = () => async (ctx, next) => {
     await next()
 }
 
-
+exports.autoload = autoload
 exports.kcatcher = catcher
 exports.knotfound = knotfound
 exports.Cargo = Cargo
