@@ -13,6 +13,10 @@ const catcher = (cb = null) => async (ctx, next) => {
     }
 }
 
+const knotfound = (msg = 'not found!') => async(ctx) => {
+    ctx.body = ctx.cargo.status(404).error(msg)
+}
+
 
 class CargoError extends Error {
     constructor(msg){
@@ -98,6 +102,7 @@ exports = module.exports = () => async (ctx, next) => {
 
 
 exports.kcatcher = catcher
+exports.knotfound = knotfound
 exports.Cargo = Cargo
 exports.CargoError = CargoError
 exports.kcargo = () => async (ctx, next) => {
