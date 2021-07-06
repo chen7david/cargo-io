@@ -22,6 +22,7 @@ app.listen(port)
 ```
 
 #### Sending Data
+Note if no status is set, then it will default to 200, and the state will defualt to "success"
 ```js
 router.get('/', async (ctx) => {
     const someObject = {}
