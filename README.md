@@ -1,112 +1,58 @@
 # Cargo-IO
-Structured response object.
+Simple structured response object for koa-js.
 
-### 1. Use as in your Project
+### Koa & Cargo
+#### getting started
+0. Create a node project
+1. <code>$ npm i koa koa-router cargo-io</code>
+2. <code>$ touch index.js</code>
+
+#### index.js
 ```js
-
-const { Cargo } = require('cargo-io')
-
-const cargo = new Cargo()
-cargo.payload(somePayload)
-
-```
-
-### 2. Use as Koa Middleware
-```js
-const Koa = require('koa')
-const app = new Koa()
+const app = new (require('koa'))
 const router = require('koa-router')()
-const { handler, catcher, logger, cargo } = require('cargo-io')
-const Joi = require('joi')
+const { kcargo, kcatcher } = require('./cargo')
+const port = process.env.PORT || 3000
 
-router.get('/', async (ctx) => {
-    const { error, value } = schema.validate({})
-    if(error) ctx.throw(422, 'JoiValidationError', error)
-    ctx.body = {}
-})
-
-
-router.get('/', async (ctx) => {
-    const { username } = ctx.request.body
-    const user = await User.query()
-        .where('username', username)
-        .orWhere('email', username)
-        .first()
-    if(!user) ctx.cargo.original(ctx.request.body).state('validation')
-            .loadmsg('username', 'username not found').error(422)
-    ctx.body = {}
-})
-
-
-router.get('/', async (id, ctx, next) => {
-    const user = await User.query().where('id', id).first()
-    if(!user) ctx.cargo.msg('invalid user id').error(422)
-    ctx.state.user = user
-    await next()
-})
-
-
-/* ERROR HANDLING MIDDLEWARE */
-app.use(cargo())
-app.use(catcher(handler(extender)))
-app.on('error', logger)
-
+app.use(kcargo())
+app.use(kcatcher(handler))
 app.use(router.routes())
 
-app.listen(4000)
+app.listen(port)
 ```
 
+#### Validation Error Response
+
 ```js
-module.exports = {
-  
-    validateBody: (schema) => async (ctx, next) => {
-        try {
-            const body = ctx.request.body
-            const { error, value } = schema.validate(body)
-            if(error) ctx.throw(422, 'JoiValidationError', error)
-            ctx.request.body = value
-            await next()
-        } catch (err) {
-            ctx.throw(500, 'SystemError', err) 
-        }
-    }, 
-    schema
-}
+router.get('/', async (ctx) => {
+    /* VALIDATION */
+    const validationErrors = [
+        {key:'username', message:'invalid username'},
+        {key:'password', message:'invalid password'}
+    ]
+    ctx.cargo.status(422)
+    validationErrors.map(o => ctx.cargo.messages(o))
+    ctx.cargo.error() // Note: no code after this will run as it throws an error wich invokes the kcatcher middleware.
+    
+    ctx.body = ctx.body = ctx.cargo.status(201).message('object created').payload({})
+})
 ```
-
-### Example Extender Function
-```js
-
-const { ValidationError } = require('joi')
-const { UniqueViolationError } = require('objection')
-const { JsonWebTokenError } = require('jsonwebtoken')
-
-module.exports = async (err, ctx, next) => {
-
-        if(err instanceof ValidationError){
-            const { details, _original } = err
-            ctx.cargo.original(_original).state('validation').status(422)
-            details.map(d => ctx.cargo.loadmsg(d.context.key, d.message))
-            ctx.cargo
+###### output
+```cmd
+{
+    "isCargo": true,
+    "status": 422,
+    "serial": 871000,
+    "messages": [
+        {
+            "key": "username",
+            "message": "invalid username"
+        },
+        {
+            "key": "password",
+            "message": "invalid password"
         }
-        
-        if(err instanceof UniqueViolationError){
-            let key = err.columns.pop()
-            ctx.cargo.original(ctx.request.body).state('validation').status(422)
-            ctx.cargo.loadmsg(key, `this ${key} is already taken`)
-        }
-        
-        if(err instanceof JsonWebTokenError){
-            if(err.message == 'invalid signature') ctx.cargo.status(401).msg('invalid token signature')
-            if(err.message == 'jwt expired') ctx.cargo.status(401).msg('token expired')
-            if(err.message == 'jwt malformed') ctx.cargo.status(401).msg('invalid token format')
-            if(err.message == 'jwt must be provided') ctx.cargo.status(401).msg('token missing')
-        }
-        
-        /* DEFAULT EXCEPTION MUTATOR */
-        if(Object.keys(ctx.cargo.details).length == 0){
-            ctx.serial = Math.floor(Math.random()*90000) + 10000
-            ctx.cargo.serial(ctx.serial).msg(`unknow error - ER${ctx.serial}`).status(500)
-        }
+    ],
+    "state": "validation"
 }
 ```
