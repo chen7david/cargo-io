@@ -1,32 +1,34 @@
-global.c = (val) => console.log(val)
-const Koa = require('koa')
-const app = new Koa()
+const app = new (require('koa'))
 const router = require('koa-router')()
-const jwt = require('jsonwebtoken')
-const { mutator, errors, logger } = require('./middleware')
-const cargo = require('./cargo')
-const Joi = require('joi')
+const { kcargo, kcatcher } = require('./cargo')
 
-const schema = Joi.object().options({ abortEarly: false, stripUnknown: true }).keys({
-    username: Joi.string().required(),
-    password: Joi.string().required(),
-})
+const handler = async (error, ctx, next) => {
+    // handle errors here with the ctx.cargo object
+}
 
-router.get('/', async (ctx) => {
-    const token = jwt.sign({}, 'secret', {expiresIn: '-1s'})
-    // const { error, value } = schema.validate({})
-    // if(error) ctx.throw(422, 'JoiValidationError', error)
-    jwt.verify(token, 'secret')
-    c(token)
-    ctx.body = {}
-})
-
-
-/* ERROR HANDLING MIDDLEWARE */
-app.use(cargo())
-app.use(errors(mutator()))
-app.on('error', logger)
-
+app.use(kcatcher(handler))
+app.use(kcargo())
 app.use(router.routes())
 
+router.get('/', async (ctx) => {
+    /* VALIDATION */
+    const validationErrors = [
+        {key:'username', message:'invalid username'},
+        {key:'password', message:'invalid password'}
+    ]
+    ctx.cargo.status(422)
+    validationErrors.map(o => ctx.cargo.messages(o))
+    ctx.cargo.error()
+
+    ctx.body = ctx.cargo.status(201).message('object created').payload({})
+})
+
+
+
+
+
+
 app.listen(4000)
+
+
+
