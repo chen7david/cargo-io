@@ -1,6 +1,6 @@
 {
   "name": "cargo-io",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Structured messaging interface for APIs",
   "main": "index.js",
   "repository": {

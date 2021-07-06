@@ -50,7 +50,7 @@ class Cargo {
         this._serial =  Math.floor(100000 + Math.random() * 999999)
     }
 
-    messages({key, message}){
+    messages(key, message){
         if(!this._messages) this._messages = []
         this._messages.push({key, message})
         return this
