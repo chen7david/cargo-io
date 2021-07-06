@@ -17,13 +17,14 @@ const knotfound = (msg = 'not found!') => async(ctx) => {
     ctx.body = ctx.cargo.status(404).error(msg)
 }
 
-const autoload = (folderpath = '.') => {
+const autoload = (path = '.') => {
     const { readdirSync } = require('fs')
+    const p = require('path')
     const files = {}
 
-    readdirSync(folderpath)
+    readdirSync(path)
         .filter(f => f.includes('.js') && !f.includes('index'))
-        .map(f => files[f.replace('.js', '')] = require('./' + f))
+        .map(f => files[f.replace('.js', '')] = require(p.join(path,f)))
 
     return files
 }
