@@ -66,6 +66,26 @@ router.get('/', async (ctx) => {
 }
 ```
 
+#### Throwning an Error
+Note: if you don't specify the status of the error, it will default to 500.
+```js
+router.get('/', async (ctx) => {
+    /* THROWING ERROR */
+    ctx.cargo.status(401).error('invalid token') // Note: no code will run after this (as it throws an error wich invokes the kcatcher middleware.)
+    ctx.body = ctx.body = ctx.cargo.status(201).message('object created').payload({})
+})
+```
+###### output
+```cmd
+{
+    "isCargo": true,
+    "status": 401,
+    "serial": 461151,
+    "message": "invalid token",
+    "state": "danger"
+}
+```
+
 #### Validation Error Response
 
 ```js
