@@ -46,6 +46,7 @@ class Cargo {
     }
 
     error(message = 'not specified'){
+        if(this._status == 200) this._status = 500
         this._message = this._message || message
         throw(new CargoError(this._message))
     }

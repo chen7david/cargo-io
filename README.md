@@ -101,3 +101,11 @@ router.get('/', async (ctx) => {
     "state": "validation"
 }
 ```
+
+#### Default States
+```js
+if(this._status <= 230) this._state = 'success'
+if(this._status >= 231 && this._status < 400) this._state = 'warning'
+if(this._status > 400) this._state = 'danger'
+if(this._status == 422) this._state = 'validation'
+```
