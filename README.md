@@ -46,26 +46,6 @@ router.get('/', async (ctx) => {
 }
 ```
 
-#### Unhandled Error
-if you dont handle an error, it will get masked as an unknow error in your response with a serial number, which you can use to track it in your logs.
-```js
-router.get('/', async (ctx) => {
-    /* UNKNOWN ERROR */
-    throw(new Error()) // Note: no code will run after this (as it throws an error wich invokes the kcatcher middleware.)
-    ctx.body = ctx.body = ctx.cargo.status(201).message('object created').payload({})
-})
-```
-###### output
-```cmd
-{
-    "isCargo": true,
-    "status": 500,
-    "serial": 520259,
-    "message": "unknown error: E520259",
-    "state": "danger"
-}
-```
-
 #### Throwning an Error
 Note: if you don't specify the status of the error, it will default to 500.
 ```js
@@ -82,6 +62,26 @@ router.get('/', async (ctx) => {
     "status": 401,
     "serial": 461151,
     "message": "invalid token",
+    "state": "danger"
+}
+```
+
+#### Unhandled Error
+if you dont handle an error, it will get masked as an unknow error in your response with a serial number, which you can use to track it in your logs.
+```js
+router.get('/', async (ctx) => {
+    /* UNKNOWN ERROR */
+    throw(new Error()) // Note: no code will run after this (as it throws an error wich invokes the kcatcher middleware.)
+    ctx.body = ctx.body = ctx.cargo.status(201).message('object created').payload({})
+})
+```
+###### output
+```cmd
+{
+    "isCargo": true,
+    "status": 500,
+    "serial": 520259,
+    "message": "unknown error: E520259",
     "state": "danger"
 }
 ```
