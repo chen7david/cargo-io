@@ -5,7 +5,6 @@ const catcher = (cb = null) => async (ctx, next) => {
         errorCode = ctx.cargo._serial
         if(cb) await cb(error, ctx, next)
         const { _message, _messages } = ctx.cargo
-        v({ _message, _messages })
         if(!_message && !_messages) ctx.cargo.status(500).message(`unknown error: E${errorCode}`)
         ctx.status = ctx.cargo.getStatus() != 200 ? ctx.cargo.getStatus() : 500
         console.log({errorCode, error})

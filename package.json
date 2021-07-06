@@ -1,6 +1,6 @@
 {
   "name": "cargo-io",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Structured messaging interface for APIs",
   "main": "index.js",
   "repository": {
@@ -17,7 +17,5 @@
     "url": "https://github.com/chen7david/cargo-io/issues"
   },
   "homepage": "https://github.com/chen7david/cargo-io#readme",
-  "dependencies": {
-    "funx-js": "latest"
-  }
+  "dependencies": {}
 }
